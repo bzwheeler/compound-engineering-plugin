@@ -35,13 +35,14 @@ Agents are organized into categories for easier discovery.
 | `schema-drift-detector` | Detect unrelated schema.rb changes in PRs |
 | `security-sentinel` | Security audits and vulnerability assessments |
 
-### Research (5)
+### Research (6)
 
 | Agent | Description |
 |-------|-------------|
 | `best-practices-researcher` | Gather external best practices and examples |
 | `framework-docs-researcher` | Research framework documentation and best practices |
 | `git-history-analyzer` | Analyze git history and code evolution |
+| `institutional-archeologist` | Search external sources (Slack, GitHub, Notion) for prior decisions and discussions |
 | `learnings-researcher` | Search institutional learnings for relevant past solutions |
 | `repo-research-analyst` | Research repository structure and conventions |
 
@@ -53,12 +54,13 @@ Agents are organized into categories for easier discovery.
 | `design-iterator` | Iteratively refine UI through systematic design iterations |
 | `figma-design-sync` | Synchronize web implementations with Figma designs |
 
-### Workflow (5)
+### Workflow (6)
 
 | Agent | Description |
 |-------|-------------|
 | `bug-reproduction-validator` | Systematically reproduce and validate bug reports |
 | `every-style-editor` | Edit content to conform to Every's style guide |
+| `institutional-archivist` | Distill archeologist findings into structured digests in docs/institutional/ |
 | `lint` | Run linting and code quality checks on Ruby and ERB files |
 | `pr-comment-resolver` | Address PR comments and implement fixes |
 | `spec-flow-analyzer` | Analyze user flows and identify gaps in specifications |
@@ -82,6 +84,8 @@ Core workflow commands use `ce:` prefix to unambiguously identify them as compou
 | `/ce:review` | Run comprehensive code reviews |
 | `/ce:work` | Execute work items systematically |
 | `/ce:compound` | Document solved problems to compound team knowledge |
+| `/ce:auto-compound` | Batch-extract knowledge from historical merged PRs |
+| `/ce:retro` | Feed PR review feedback back into domain specialist agent files |
 
 > **Deprecated aliases:** `/workflows:plan`, `/workflows:work`, `/workflows:review`, `/workflows:brainstorm`, `/workflows:compound` still work but show a deprecation warning. Use `ce:*` equivalents.
 
@@ -120,12 +124,19 @@ Core workflow commands use `ce:` prefix to unambiguously identify them as compou
 | Skill | Description |
 |-------|-------------|
 | `andrew-kane-gem-writer` | Write Ruby gems following Andrew Kane's patterns |
+| `auto-compound` | Batch-extract knowledge from historical merged PRs into docs/solutions/ |
 | `compound-docs` | Capture solved problems as categorized documentation |
 | `create-agent-skills` | Expert guidance for creating Claude Code skills |
 | `dhh-rails-style` | Write Ruby/Rails code in DHH's 37signals style |
 | `dspy-ruby` | Build type-safe LLM applications with DSPy.rb |
 | `frontend-design` | Create production-grade frontend interfaces |
 | `skill-creator` | Guide for creating effective Claude Code skills |
+
+### Domain Specialists
+
+| Skill | Description |
+|-------|-------------|
+| `domain-specialists` | Route tasks to project-specific domain specialist agents based on file patterns, labels, and keywords |
 
 ### Content & Workflow
 
@@ -206,6 +217,26 @@ The `agent-browser` skill provides comprehensive documentation on usage.
 ```bash
 claude /plugin install compound-engineering
 ```
+
+## Artifact Paths Configuration
+
+Temporary workflow artifacts (todos, brainstorm docs, plan docs) can be redirected from default locations to a scratch area via `compound-engineering.local.md` frontmatter:
+
+```yaml
+---
+artifact_paths:
+  root: scratch
+  # Optional per-path overrides:
+  # todos: scratch/todos
+  # brainstorms: scratch/brainstorms
+  # plans: scratch/plans
+---
+```
+
+Resolution order used by workflows:
+1. `artifact_paths.<kind>`
+2. `artifact_paths.root + "/<kind>"`
+3. defaults (`todos`, `docs/brainstorms`, `docs/plans`)
 
 ## Known Issues
 

@@ -134,7 +134,12 @@ topic: <kebab-case-topic>
 → `/ce:plan` for implementation details
 ```
 
-**Output Location:** `docs/brainstorms/YYYY-MM-DD-<topic>-brainstorm.md`
+**Output Location:** Resolve `BRAINSTORMS_DIR` from `compound-engineering.local.md` frontmatter, then write `BRAINSTORMS_DIR/YYYY-MM-DD-<topic>-brainstorm.md`.
+
+Resolution order:
+1. `artifact_paths.brainstorms`
+2. `artifact_paths.root + "/brainstorms"`
+3. default: `docs/brainstorms`
 
 ### Phase 4: Handoff
 

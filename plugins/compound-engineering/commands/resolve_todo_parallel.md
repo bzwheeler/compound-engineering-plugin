@@ -6,13 +6,29 @@ argument-hint: "[optional: specific todo ID or pattern]"
 
 Resolve all TODO comments using parallel processing.
 
+## Artifact Paths (Resolve First)
+
+Read `compound-engineering.local.md` frontmatter (if present) and resolve artifact directories before reading todos.
+
+Path resolution order:
+1. `artifact_paths.todos` (exact override)
+2. `artifact_paths.root + "/todos"` (if `root` is set)
+3. Default: `todos`
+
+Also resolve plan path for protected-artifact checks:
+1. `artifact_paths.plans`
+2. `artifact_paths.root + "/plans"`
+3. Default: `docs/plans`
+
+Store resolved values as `TODOS_DIR` and `PLANS_DIR`.
+
 ## Workflow
 
 ### 1. Analyze
 
-Get all unresolved TODOs from the /todos/\*.md directory
+Get all unresolved TODOs from `TODOS_DIR/*.md`.
 
-If any todo recommends deleting, removing, or gitignoring files in `docs/plans/` or `docs/solutions/`, skip it and mark it as `wont_fix`. These are compound-engineering pipeline artifacts that are intentional and permanent.
+If any todo recommends deleting, removing, or gitignoring files in `PLANS_DIR/` or `docs/solutions/`, skip it and mark it as `wont_fix`. These are compound-engineering pipeline artifacts that are intentional and permanent.
 
 ### 2. Plan
 

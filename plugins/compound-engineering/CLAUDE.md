@@ -91,6 +91,40 @@ grep -E '`(references|assets|scripts)/[^`]+`' skills/*/SKILL.md
 grep -E '^description:' skills/*/SKILL.md
 ```
 
+## compound-engineering.local.md Schema
+
+The `compound-engineering.local.md` file in the project root configures plugin behavior. Key blocks:
+
+### `artifact_paths`
+
+```yaml
+---
+artifact_paths:
+  root: "docs"           # base directory for all artifacts
+  brainstorms: "docs/brainstorms"   # override brainstorm output dir
+  plans: "docs/plans"              # override plan output dir
+---
+```
+
+### `institutional_knowledge`
+
+```yaml
+---
+institutional_knowledge:
+  enabled: true          # set to false to disable institutional research
+  data_sources:
+    - Slack              # uses Slack MCP if available
+    - Notion             # uses Notion MCP if available
+    - GitHub PRs         # uses gh CLI
+    - GitHub Issues      # uses gh CLI
+  institutional_dir: "docs/institutional"  # optional, default shown
+---
+```
+
+**data_sources values**: `Slack`, `Notion`, `GitHub PRs`, `GitHub Issues`, `Linear`, `Confluence`
+
+The `institutional-archeologist` reads this config to determine which external sources to search. The `institutional-archivist` writes distilled digests to `institutional_dir`. The `learnings-researcher` reads from `institutional_dir` alongside `docs/solutions/`.
+
 ## Documentation
 
 See `docs/solutions/plugin-versioning-requirements.md` for detailed versioning workflow.

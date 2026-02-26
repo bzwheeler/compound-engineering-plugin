@@ -12,7 +12,7 @@ If `AskUserQuestion` is available, use it for all prompts below.
 
 If not, present each question as a numbered list and wait for a reply before proceeding to the next step. For multiSelect questions, accept comma-separated numbers (e.g. `1, 3`). Never skip or auto-configure.
 
-Interactive setup for `compound-engineering.local.md` — configures which agents run during `/ce:review` and `/ce:work`.
+Interactive setup for `compound-engineering.local.md` — configures which agents run during `/ce:review` and `/ce:work`, plus where temporary workflow artifacts are written.
 
 ## Step 1: Check Existing Config
 
@@ -140,12 +140,50 @@ options:
 
 **Plan review agents:** stack-specific reviewer + `code-simplicity-reviewer`.
 
+### Step 4a: Configure Artifact Paths
+
+Use AskUserQuestion:
+
+```
+question: "Where should temporary workflow artifacts be stored (plans, brainstorms, todos)?"
+header: "Artifacts"
+options:
+  - label: "Default paths (Recommended)"
+    description: "Use todos/, docs/brainstorms/, docs/plans/."
+  - label: "Single scratch root"
+    description: "Store under one root (example: scratch/{todos,brainstorms,plans})."
+  - label: "Custom per path"
+    description: "Set todos, brainstorms, and plans paths independently."
+```
+
+If user chooses:
+- **Default paths**: omit `artifact_paths` from config (commands use built-in defaults).
+- **Single scratch root**: ask for root path (example: `scratch`) and write:
+  - `artifact_paths.root: <path>`
+- **Custom per path**: ask for each path and write:
+  - `artifact_paths.todos`, `artifact_paths.brainstorms`, `artifact_paths.plans`
+
+Path semantics:
+- Relative paths are repo-root relative.
+- Absolute paths are allowed but should be discouraged unless needed.
+- `artifact_paths.<kind>` overrides `artifact_paths.root` for that kind.
+
 Write `compound-engineering.local.md`:
 
 ```markdown
 ---
 review_agents: [{computed agent list}]
 plan_review_agents: [{computed plan agent list}]
+artifact_paths:
+  # Optional. Omit this block to use defaults:
+  # todos/
+  # docs/brainstorms/
+  # docs/plans/
+  root: scratch
+  # Optional per-path overrides:
+  # todos: scratch/todos
+  # brainstorms: scratch/brainstorms
+  # plans: scratch/plans
 ---
 
 # Review Context
@@ -159,6 +197,49 @@ Examples:
 - "Performance-critical: we serve 10k req/s on this endpoint"
 ```
 
+## Step 4b: Domain Specialists (Optional)
+
+Check if `.claude/agents/` contains any agent files. If so, offer to configure domain specialist routing:
+
+```
+question: "Found agent files in .claude/agents/. Configure domain specialist routing?"
+header: "Specialists"
+options:
+  - label: "Auto-detect (Recommended)"
+    description: "Scan agent files and infer routing rules from their content"
+  - label: "Skip"
+    description: "Don't configure specialist routing now"
+  - label: "Scaffold new"
+    description: "Analyze repo structure and propose new specialists"
+```
+
+**If Auto-detect:**
+1. Read each `.claude/agents/*.md` file
+2. Extract the agent name and description from frontmatter
+3. Infer `file_patterns`, `labels`, and `keywords` from the agent's content
+4. Add a `domain_specialists` section to `compound-engineering.local.md` frontmatter
+
+**If Scaffold new:**
+Run the `domain-specialists` skill's scaffold workflow to analyze repo structure and propose specialist definitions.
+
+**If Skip:** Proceed without `domain_specialists` in the config.
+
+The `domain_specialists` config is added to the same YAML frontmatter:
+
+```yaml
+---
+review_agents: [{computed agent list}]
+plan_review_agents: [{computed plan agent list}]
+artifact_paths:
+  root: scratch
+domain_specialists:
+  - agent: graphql-specialist
+    file_patterns: ["src/**/graphql/**"]
+    labels: ["graphql"]
+    keywords: ["resolver", "dataloader"]
+---
+```
+
 ## Step 5: Confirm
 
 ```
@@ -168,6 +249,7 @@ Stack:        {type}
 Review depth: {depth}
 Agents:       {count} configured
               {agent list, one per line}
+Artifacts:    {defaults OR configured paths}
 
 Tip: Edit the "Review Context" section to add project-specific instructions.
      Re-run this setup anytime to reconfigure.

@@ -5,6 +5,22 @@ All notable changes to the compound-engineering plugin will be documented in thi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **`institutional-archeologist` agent** — Researches external data sources (Slack, GitHub Issues, GitHub PRs, Notion) to surface relevant prior discussions and decisions during planning. Reads `compound-engineering.local.md` for configured sources, checks `docs/institutional/` for existing research before excavating (gap-fills rather than re-running full searches), and hands off findings to the archivist. Automatically triggered by `/workflows:plan` and `/workflows:brainstorm`.
+- **`institutional-archivist` agent** — Distills archeologist findings into structured digests saved to `docs/institutional/`. Generates rich YAML frontmatter (`topics`, `sources`, `last_searched_date`, `key_decisions`, `open_questions`) for efficient grep-first retrieval in future sessions. Supports gap-fill mode (merges new findings into existing files) and full excavation mode (creates new file).
+- **Institutional knowledge in `/workflows:plan`** — Archeologist + archivist run in parallel with existing repo-research-analyst and learnings-researcher during Phase 1 research. Findings are injected into planning context via archivist summary.
+- **Institutional knowledge in `/workflows:brainstorm`** — Same archeologist + archivist integration in Phase 1.1 Repository Research, grounding brainstorming in prior institutional context.
+- **`docs/institutional/` search in `learnings-researcher`** — Agent now searches both `docs/solutions/` and `docs/institutional/` when surfacing relevant learnings. Institutional digests appear as a dedicated "Institutional Knowledge" section in output.
+- **`institutional_knowledge` config block in `compound-engineering.local.md`** — New optional configuration block to enable/disable institutional knowledge features and specify data sources (`Slack`, `Notion`, `GitHub PRs`, `GitHub Issues`) and output directory.
+- **`/workflows:auto-compound` command** — Batch-extract knowledge from historical merged PRs into structured `docs/solutions/` entries. Enumerates merged PRs using `gh` CLI with date range, label, author, and limit filters. Synthesizes problem context from PR descriptions, inline review comments, and linked issues. Classifies into compound-docs YAML schema and deduplicates against existing docs. Includes `--dry-run` mode for previewing output. Produces a summary report of all processed PRs.
+- **`auto-compound` skill** — 6-phase workflow (enumerate, synthesize, classify, deduplicate, generate, report) with reference docs for context synthesis heuristics and YAML classification mapping.
+- **Generic component values in compound-docs schema** — Added `backend`, `frontend`, `api_endpoint`, `database_migration`, `infrastructure`, `configuration` to the `component` enum, enabling the compound-docs system to work with non-Rails repositories.
+
+---
+
 ## [2.38.1] - 2026-03-01
 
 ### Fixed
@@ -76,6 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`/workflows:plan` brainstorm integration** — When plan finds a brainstorm document, it now heavily references it throughout. Added `origin:` frontmatter field to plan templates, brainstorm cross-check in final review, and "Sources" section at the bottom of all three plan templates (MINIMAL, MORE, A LOT). Brainstorm decisions are carried forward with explicit references (`see brainstorm: <path>`) and a mandatory scan before finalizing ensures nothing is dropped.
 
 ---
+
 
 ## [2.35.1] - 2026-02-18
 

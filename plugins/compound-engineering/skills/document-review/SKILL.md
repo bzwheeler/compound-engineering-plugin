@@ -11,7 +11,11 @@ Improve brainstorm or plan documents through structured review.
 
 **If a document path is provided:** Read it, then proceed to Step 2.
 
-**If no document is specified:** Ask which document to review, or look for the most recent brainstorm/plan in `docs/brainstorms/` or `docs/plans/`.
+**If no document is specified:** Resolve `BRAINSTORMS_DIR` and `PLANS_DIR` from `compound-engineering.local.md` frontmatter, then ask which document to review, or look for the most recent brainstorm/plan in those directories.
+
+Resolution order:
+- `artifact_paths.brainstorms` → `artifact_paths.root + "/brainstorms"` → default `docs/brainstorms`
+- `artifact_paths.plans` → `artifact_paths.root + "/plans"` → default `docs/plans`
 
 ## Step 2: Assess
 

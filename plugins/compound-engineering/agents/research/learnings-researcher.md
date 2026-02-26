@@ -29,7 +29,11 @@ You are an expert institutional knowledge researcher specializing in efficiently
 
 ## Search Strategy (Grep-First Filtering)
 
-The `docs/solutions/` directory contains documented solutions with YAML frontmatter. When there may be hundreds of files, use this efficient strategy that minimizes tool calls:
+Two directories contain relevant knowledge:
+- **`docs/solutions/`** — documented solutions to past technical problems
+- **`docs/institutional/`** — distilled digests from external sources (Slack, GitHub, Notion)
+
+Search both directories. When there may be hundreds of files, use this efficient strategy that minimizes tool calls:
 
 ### Step 1: Extract Keywords from Feature Description
 
@@ -82,7 +86,24 @@ Grep: pattern="component:.*background_job" path=docs/solutions/ output_mode=file
 Grep: pattern="email" path=docs/solutions/ output_mode=files_with_matches -i=true
 ```
 
-### Step 3b: Always Check Critical Patterns
+### Step 3b: Search docs/institutional/ in Parallel
+
+**Also search `docs/institutional/`** for distilled digests from external sources:
+
+```bash
+# Search institutional knowledge for topic matches (run in PARALLEL with docs/solutions/ searches)
+Grep: pattern="topics:.*<keyword>" path=docs/institutional/ output_mode=files_with_matches -i=true
+Grep: pattern="feature:.*<keyword>" path=docs/institutional/ output_mode=files_with_matches -i=true
+```
+
+For each matching institutional file:
+1. Read frontmatter (limit to first 30 lines)
+2. Check `key_decisions` and `open_questions` arrays — these are quick-scan summaries
+3. If relevant, read the full file and include `Key Decisions` and `Context & Constraints` sections in output
+
+**Why this matters:** Institutional digests capture decisions made in Slack threads, GitHub discussions, and Notion docs that never make it into code. They often explain *why* a pattern exists, not just that it does.
+
+### Step 3c: Always Check Critical Patterns
 
 **Regardless of Grep results**, always read the critical patterns file:
 
@@ -92,7 +113,7 @@ Read: docs/solutions/patterns/critical-patterns.md
 
 This file contains must-know patterns that apply across all work - high-severity issues promoted to required reading. Scan for patterns relevant to the current feature/task.
 
-### Step 4: Read Frontmatter of Candidates Only
+### Step 4: Read Frontmatter of docs/solutions/ Candidates Only
 
 For each candidate file from Step 3, read the frontmatter:
 
@@ -199,13 +220,22 @@ Structure your findings as:
 ### Search Context
 - **Feature/Task**: [Description of what's being implemented]
 - **Keywords Used**: [tags, modules, symptoms searched]
-- **Files Scanned**: [X total files]
-- **Relevant Matches**: [Y files]
+- **Files Scanned**: [X total files in docs/solutions/, Y total files in docs/institutional/]
+- **Relevant Matches**: [Z files]
 
 ### Critical Patterns (Always Check)
 [Any matching patterns from critical-patterns.md]
 
-### Relevant Learnings
+### Institutional Knowledge (from docs/institutional/)
+[Key decisions and context from distilled digests — what was decided in Slack/GitHub/Notion]
+
+#### [Topic Digest Title]
+- **File**: docs/institutional/[filename]
+- **Key Decisions**: [list from frontmatter]
+- **Open Questions**: [list from frontmatter]
+- **Relevance**: [why this matters for current task]
+
+### Relevant Learnings (from docs/solutions/)
 
 #### 1. [Title]
 - **File**: [path]
@@ -222,7 +252,7 @@ Structure your findings as:
 - [Gotchas to avoid]
 
 ### No Matches
-[If no relevant learnings found, explicitly state this]
+[If no relevant learnings found in either directory, explicitly state this]
 ```
 
 ## Efficiency Guidelines
@@ -257,8 +287,10 @@ Structure your findings as:
 ## Integration Points
 
 This agent is designed to be invoked by:
-- `/ce:plan` - To inform planning with institutional knowledge
+- `/ce:plan` - To inform planning with institutional knowledge (searches both `docs/solutions/` and `docs/institutional/`)
 - `/deepen-plan` - To add depth with relevant learnings
 - Manual invocation before starting work on a feature
 
 The goal is to surface relevant learnings in under 30 seconds for a typical solutions directory, enabling fast knowledge retrieval during planning phases.
+
+**Note:** `docs/institutional/` digests are created by the `institutional-archivist` agent after the `institutional-archeologist` runs during planning. If `docs/institutional/` is empty, the learnings-researcher skips that search gracefully.

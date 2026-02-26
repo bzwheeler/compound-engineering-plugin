@@ -5,6 +5,20 @@ All notable changes to the `@every-env/compound-plugin` CLI tool will be documen
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Domain Specialists** — Route tasks to project-specific domain specialist agents based on file patterns, labels, and keywords. Specialists are agent files in `.claude/agents/` with routing triggers configured in `compound-engineering.local.md`.
+  - New `domain-specialists` skill with routing algorithm, scaffold workflow, and retro workflow
+  - New `/workflows:retro` command — feed PR review feedback back into specialist agent files to compound their expertise over time
+  - `/workflows:work` now delegates tasks to matching specialists during execution
+  - `/workflows:review` now includes domain specialist reviewers alongside configured review agents
+  - `/workflows:compound` now offers to update specialist agent files with learnings from documented solutions
+  - `setup` skill now detects existing agent files and offers to configure specialist routing
+
+---
+
 Release numbering now follows the repository `v*` tag line. Starting at `v2.34.0`, the root CLI package and this changelog stay on that shared version stream. Older entries below retain the previous `0.x` CLI numbering.
 
 ## [2.34.3](https://github.com/EveryInc/compound-engineering-plugin/compare/v2.34.2...v2.34.3) (2026-03-03)

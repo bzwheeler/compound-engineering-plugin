@@ -218,6 +218,9 @@ Did it work correctly?
 
 <failure_handling>
 
+Resolve `TODOS_DIR` from `compound-engineering.local.md` frontmatter before creating todo files:
+`artifact_paths.todos` → `artifact_paths.root + "/todos"` → default `todos`.
+
 When a test fails:
 
 1. **Document the failure:**
@@ -233,7 +236,7 @@ When a test fails:
 
    How to proceed?
    1. Fix now - I'll help debug and fix
-   2. Create todo - Add to todos/ for later
+   2. Create todo - Add to configured todo directory (`TODOS_DIR`) for later
    3. Skip - Continue testing other pages
    ```
 

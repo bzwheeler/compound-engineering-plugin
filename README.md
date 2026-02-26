@@ -167,8 +167,9 @@ Plan → Work → Review → Compound → Repeat
 | `/ce:work` | Execute plans with worktrees and task tracking |
 | `/ce:review` | Multi-agent code review before merging |
 | `/ce:compound` | Document learnings to make future work easier |
+| `/ce:retro` | Feed PR review feedback back into domain specialist agents |
 
-Each cycle compounds: plans inform future plans, reviews catch more issues, patterns get documented.
+Each cycle compounds: plans inform future plans, reviews catch more issues, patterns get documented. Domain specialists grow smarter with every retro.
 
 ## Philosophy
 

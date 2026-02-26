@@ -54,7 +54,14 @@ required_fields:
       - testing_framework    # Test setup, fixtures, VCR
       - documentation        # README, guides, inline docs
       - tooling              # Scripts, generators, CLI tools
-    description: "CORA component involved"
+      # Generic components (for non-Rails repos)
+      - backend              # Server-side code (generic)
+      - frontend             # Client-side code (generic)
+      - api_endpoint         # REST/GraphQL endpoint, route, serializer
+      - database_migration   # Migration or schema change (generic)
+      - infrastructure       # CI/CD, Docker, deployment, cloud config
+      - configuration        # App config, environment variables, settings
+    description: "Component involved (use generic values for non-Rails repos)"
 
   symptoms:
     type: array[string]
